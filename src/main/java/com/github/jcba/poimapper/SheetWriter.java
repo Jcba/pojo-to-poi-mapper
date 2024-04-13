@@ -1,7 +1,12 @@
-package org.jocba.poimapper;
+package com.github.jcba.poimapper;
 
 import java.util.stream.Stream;
 
+/**
+ * Describes sheet writer behaviour
+ *
+ * @param <T> The annotated Java Object Type
+ */
 public interface SheetWriter<T> {
 
     /**

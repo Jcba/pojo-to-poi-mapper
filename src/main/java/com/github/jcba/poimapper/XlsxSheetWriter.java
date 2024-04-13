@@ -1,4 +1,4 @@
-package org.jocba.poimapper;
+package com.github.jcba.poimapper;
 
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -6,11 +6,22 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+/**
+ * A sheet writer writing Xlsx sheets
+ *
+ * @param <T> The annotated Java Object TYpe
+ */
 public class XlsxSheetWriter<T> implements SheetWriter<T> {
     private final Sheet sheet;
     private final ColumnAnnotationParser<T> columnAnnotationParser;
     private int rowIndex = 0;
 
+    /**
+     * Constructs a new XslxSheetWriter
+     *
+     * @param type the annotated Java Object Class Type
+     * @param sheet the sheet to write to
+     */
     public XlsxSheetWriter(Class<T> type, Sheet sheet) {
         this.sheet = sheet;
         columnAnnotationParser = new ColumnAnnotationParser<>(type);

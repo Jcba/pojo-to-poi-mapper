@@ -1,4 +1,4 @@
-package org.jocba.poimapper;
+package com.github.jcba.poimapper;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -22,7 +22,7 @@ public class XlsxWriterJavaTest {
                 new ColumnAnnotated("val4", "val5", "val6")
         );
 
-        var actualSheet = setUpWorkbookWithSheetData(ColumnAnnotated.class, testRows);
+        var actualSheet = createWorkbookWithSheetData(ColumnAnnotated.class, testRows);
 
         assertThat(toList(actualSheet.getRow(0)))
                 .containsExactly("first", "second", "third");
@@ -39,7 +39,7 @@ public class XlsxWriterJavaTest {
                 new NotAllColumnAnnotated("val4", "val5", "val6")
         );
 
-        var actualSheet = setUpWorkbookWithSheetData(NotAllColumnAnnotated.class, testRows);
+        var actualSheet = createWorkbookWithSheetData(NotAllColumnAnnotated.class, testRows);
 
         assertThat(toList(actualSheet.getRow(0))).containsExactly("first", "column2");
         assertThat(toList(actualSheet.getRow(1))).containsExactly(testRows.get(0).first, testRows.get(0).second);
@@ -48,7 +48,7 @@ public class XlsxWriterJavaTest {
 
     @Test
     void writesColumns_whenEmptySheet() {
-        var actualSheet = setUpWorkbookWithSheetData(NotAllColumnAnnotated.class, List.of());
+        var actualSheet = createWorkbookWithSheetData(NotAllColumnAnnotated.class, List.of());
 
         assertThat(toList(actualSheet.getRow(0))).containsExactly("first", "column2");
     }
@@ -60,7 +60,7 @@ public class XlsxWriterJavaTest {
                 new NotAllColumnAnnotated("val4", "val5", "val6")
         );
 
-        var actualSheet = setUpStreamingWorkbookWithSheetData(NotAllColumnAnnotated.class, testRows);
+        var actualSheet = createStreamingWorkbookWithSheetData(NotAllColumnAnnotated.class, testRows);
 
         assertThat(toList(actualSheet.getRow(0))).containsExactly("first", "column2");
         assertThat(toList(actualSheet.getRow(1))).containsExactly(testRows.get(0).first, testRows.get(0).second);
@@ -87,7 +87,7 @@ public class XlsxWriterJavaTest {
     ) {
     }
 
-    private <T> Sheet setUpWorkbookWithSheetData(Class<T> type, List<T> testData) {
+    private <T> Sheet createWorkbookWithSheetData(Class<T> type, List<T> testData) {
         try (var workbook = new XSSFWorkbook()) {
             var sheet = workbook.createSheet("test");
             new XlsxSheetWriter<>(type, sheet).write(testData.stream());
@@ -97,7 +97,7 @@ public class XlsxWriterJavaTest {
         }
     }
 
-    private <T> Sheet setUpStreamingWorkbookWithSheetData(Class<T> type, List<T> testData) {
+    private <T> Sheet createStreamingWorkbookWithSheetData(Class<T> type, List<T> testData) {
         try (var workbook = new SXSSFWorkbook(5)) {
             var sheet = workbook.createSheet("test");
             new XlsxSheetWriter<>(type, sheet).write(testData.stream());

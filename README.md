@@ -16,15 +16,15 @@ Add the library dependency to your Maven or Gradle project:
 ```xml
 <!-- Maven -->
 <dependency>
-    <groupId>org.jocba</groupId>
+    <groupId>com.github.jcba</groupId>
     <artifactId>pojo-to-apache-poi-mapper</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.1</version>
 </dependency>
 ```
 
 ```groovy
 // Gradle
-implementation 'org.jocba:pojo-to-apache-poi-mapper:1.0.0'
+implementation 'com.github.jcba:pojo-to-apache-poi-mapper:0.0.1'
 ```
 
 ### Define Java Object and configure mapping
@@ -62,6 +62,9 @@ var sheet = workbook.createSheet("my-sheet-name");
 new XlsxSheetWriter<>(MyObject.class, sheet).write(testData.stream());
 
 // write workbook to file
+var out = new FileOutputStream("/tmp/demo.xlsx");
+workbook.write(out);
+out.close();
 ```
 
 ### Use Streaming API
