@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 /**
  * A sheet writer writing Xlsx sheets
  *
- * @param <T> The annotated Java Object TYpe
+ * @param <T> The annotated Java Object Type
  */
 public class XlsxSheetWriter<T> implements SheetWriter<T> {
     private final Sheet sheet;

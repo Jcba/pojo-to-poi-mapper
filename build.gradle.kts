@@ -34,7 +34,7 @@ tasks.test {
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            artifactId = "pojo-to-poi-mapper"
+            artifactId = "pojo-to-apache-poi-mapper"
             from(components["java"])
 
             pom {
