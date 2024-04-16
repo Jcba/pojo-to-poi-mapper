@@ -90,7 +90,7 @@ public class XlsxWriterJavaTest {
     private <T> Sheet createWorkbookWithSheetData(Class<T> type, List<T> testData) {
         try (var workbook = new XSSFWorkbook()) {
             var sheet = workbook.createSheet("test");
-            new XlsxSheetWriter<>(type, sheet).write(testData.stream());
+            new XlsxSheetWriter<>(type, workbook, sheet).write(testData.stream());
             return sheet;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -100,7 +100,7 @@ public class XlsxWriterJavaTest {
     private <T> Sheet createStreamingWorkbookWithSheetData(Class<T> type, List<T> testData) {
         try (var workbook = new SXSSFWorkbook(5)) {
             var sheet = workbook.createSheet("test");
-            new XlsxSheetWriter<>(type, sheet).write(testData.stream());
+            new XlsxSheetWriter<>(type, workbook, sheet).write(testData.stream());
             return sheet;
         } catch (IOException e) {
             throw new RuntimeException(e);

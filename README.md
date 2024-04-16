@@ -59,7 +59,7 @@ var workbook = new XSSFWorkbook();
 var sheet = workbook.createSheet("my-sheet-name");
 
 // this is what this library adds
-new XlsxSheetWriter<>(MyObject.class, sheet).write(testData.stream());
+new XlsxSheetWriter<>(MyObject.class, workbook, sheet).write(testData.stream());
 
 // write workbook to file
 var out = new FileOutputStream("/tmp/demo.xlsx");
@@ -78,7 +78,7 @@ var workbook = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding row
 var sheet = wb.createSheet();
 
 // this is what this library adds
-new XlsxSheetWriter<>(MyObject.class, sheet).write(testData.stream());
+new XlsxSheetWriter<>(MyObject.class, workbook, sheet).write(testData.stream());
 
 // write workbook to file
 var out = new FileOutputStream("/tmp/demo.xlsx");
