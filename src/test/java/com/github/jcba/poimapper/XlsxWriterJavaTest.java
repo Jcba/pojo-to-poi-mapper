@@ -1,6 +1,7 @@
 package com.github.jcba.poimapper;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -47,6 +48,20 @@ public class XlsxWriterJavaTest {
     }
 
     @Test
+    void formatsFields_whenAnnotated() {
+        var testRows = List.of(
+                new ColumnAnnotatedAndFormatted("row1", 10.1451345),
+                new ColumnAnnotatedAndFormatted("row2", 93030.59393910)
+        );
+
+        var actualSheet = createWorkbookWithSheetData(ColumnAnnotatedAndFormatted.class, testRows);
+
+        assertThat(toList(actualSheet.getRow(0))).containsExactly("first", "second");
+        assertThat(toList(actualSheet.getRow(1))).containsExactly(testRows.get(0).first, "10.15");
+        assertThat(toList(actualSheet.getRow(2))).containsExactly(testRows.get(1).first, "93030.59");
+    }
+
+    @Test
     void writesColumns_whenEmptySheet() {
         var actualSheet = createWorkbookWithSheetData(NotAllColumnAnnotated.class, List.of());
 
@@ -84,6 +99,12 @@ public class XlsxWriterJavaTest {
             @Column String first,
             @Column(columnName = "column2") String second,
             String notAnnotated
+    ) {
+    }
+
+    record ColumnAnnotatedAndFormatted(
+            @Column String first,
+            @Column @ColumnFormat(value = "#.##", type = CellType.NUMERIC) Double second
     ) {
     }
 

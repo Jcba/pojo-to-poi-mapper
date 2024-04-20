@@ -1,11 +1,9 @@
 package com.github.jcba.poimapper;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -55,7 +53,7 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
 
         void writeRow(List<AnnotatedFieldData> rowData) {
             createRow();
-            rowData.forEach(data -> formatCell(createCell(data.value()), data));
+            rowData.forEach(data -> formatCell(createCell(data), data));
         }
 
         private void createRow(){
@@ -63,17 +61,38 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
             currentRow = sheet.createRow(rowIndex++);
         }
 
-        private Cell createCell(Object cellValue) {
+        private void createCell(String data) {
             var cell = currentRow.createCell(columnIndex.getAndIncrement());
-            cell.setCellValue(cellValue.toString());
+            cell.setCellValue(data);
+        }
+
+        private Cell createCell(AnnotatedFieldData annotatedFieldData) {
+            var cell = currentRow.createCell(columnIndex.getAndIncrement());
+            findColumnFormatAnnotation(annotatedFieldData).ifPresentOrElse(
+                    columnFormat -> writeValueToCell(cell, annotatedFieldData.value(), columnFormat.type()),
+                    () -> cell.setCellValue(annotatedFieldData.value().toString())
+            );
             return cell;
         }
 
+        private void writeValueToCell(Cell cell, Object value, CellType type) {
+            switch (type) {
+                case BOOLEAN -> cell.setCellValue((boolean) value);
+                case NUMERIC -> cell.setCellValue((double) value);
+                default -> cell.setCellValue(value.toString());
+            }
+        }
+
         private void formatCell(Cell cell, AnnotatedFieldData annotatedFieldData) {
-            annotatedFieldData.annotations().stream()
+            findColumnFormatAnnotation(annotatedFieldData)
+                    .ifPresent(annotation -> new CellFormatter(workbook).format(cell, annotation));
+        }
+
+        private static Optional<ColumnFormat> findColumnFormatAnnotation(AnnotatedFieldData annotatedFieldData) {
+            return annotatedFieldData.annotations().stream()
                     .filter(a -> a.annotationType().equals(ColumnFormat.class))
-                    .findFirst()
-                    .ifPresent(annotation -> new CellFormatter(workbook).format(cell, ((ColumnFormat) annotation)));
+                    .map(a -> (ColumnFormat) a)
+                    .findFirst();
         }
     }
 }
