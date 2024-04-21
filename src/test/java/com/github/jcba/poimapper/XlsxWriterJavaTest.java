@@ -57,8 +57,8 @@ public class XlsxWriterJavaTest {
         var actualSheet = createWorkbookWithSheetData(ColumnAnnotatedAndFormatted.class, testRows);
 
         assertThat(toList(actualSheet.getRow(0))).containsExactly("first", "second");
-        assertThat(toList(actualSheet.getRow(1))).containsExactly(testRows.get(0).first, "10.15");
-        assertThat(toList(actualSheet.getRow(2))).containsExactly(testRows.get(1).first, "93030.59");
+        assertThat(toList(actualSheet.getRow(1))).containsExactly(testRows.get(0).first, testRows.getFirst().second().toString());
+        assertThat(toList(actualSheet.getRow(2))).containsExactly(testRows.get(1).first, testRows.getLast().second().toString());
     }
 
     @Test
@@ -84,8 +84,16 @@ public class XlsxWriterJavaTest {
 
     private List<String> toList(Row row) {
         return StreamSupport.stream(row.spliterator(), false)
-                .map(Cell::getStringCellValue)
+                .map(this::getCellValueAsString)
                 .toList();
+    }
+
+    private String getCellValueAsString(Cell cell) {
+        return switch (cell.getCellType()) {
+            case BOOLEAN -> Boolean.valueOf(cell.getBooleanCellValue()).toString();
+            case NUMERIC -> Double.valueOf(cell.getNumericCellValue()).toString();
+            default -> cell.getStringCellValue();
+        };
     }
 
     record ColumnAnnotated(

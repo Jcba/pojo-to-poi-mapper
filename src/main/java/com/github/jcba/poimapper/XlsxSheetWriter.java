@@ -34,8 +34,15 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
 
     @Override
     public void write(Stream<T> input) {
-        rowWriter.writeTextRow(columnAnnotationParser.findColumnNames());
+        writeHeader();
+        writeContent(input);
+    }
 
+    private void writeHeader() {
+        rowWriter.writeTextRow(columnAnnotationParser.findColumnNames());
+    }
+
+    private void writeContent(Stream<T> input) {
         input
                 .map(columnAnnotationParser::parse)
                 .forEach(rowWriter::writeRow);
