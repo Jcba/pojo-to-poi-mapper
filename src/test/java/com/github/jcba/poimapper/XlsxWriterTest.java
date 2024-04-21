@@ -50,15 +50,15 @@ class XlsxWriterTest {
     @Test
     void formatsFields_whenAnnotated() {
         var testRows = List.of(
-                new ColumnAnnotatedAndFormatted("row1", 10.1451345),
-                new ColumnAnnotatedAndFormatted("row2", 93030.59393910)
+                new ColumnAnnotatedAndFormatted("row1", 10.1451345, true),
+                new ColumnAnnotatedAndFormatted("row2", 93030.59393910, false)
         );
 
         var actualSheet = createWorkbookWithSheetData(ColumnAnnotatedAndFormatted.class, testRows);
 
-        assertThat(toList(actualSheet.getRow(0))).containsExactly("first", "second");
-        assertThat(toList(actualSheet.getRow(1))).containsExactly(testRows.get(0).first, testRows.getFirst().second().toString());
-        assertThat(toList(actualSheet.getRow(2))).containsExactly(testRows.get(1).first, testRows.getLast().second().toString());
+        assertThat(toList(actualSheet.getRow(0))).containsExactly("first", "second", "flag");
+        assertThat(toList(actualSheet.getRow(1))).containsExactly(testRows.get(0).first, testRows.getFirst().second().toString(), "true");
+        assertThat(toList(actualSheet.getRow(2))).containsExactly(testRows.get(1).first, testRows.getLast().second().toString(), "false");
     }
 
     @Test
@@ -112,7 +112,8 @@ class XlsxWriterTest {
 
     record ColumnAnnotatedAndFormatted(
             @Column String first,
-            @Column @ColumnFormat(value = "#.##", type = CellType.NUMERIC) Double second
+            @Column @ColumnFormat(value = "#.##", type = CellType.NUMERIC) Double second,
+            @Column @ColumnFormat(value = "", type = CellType.BOOLEAN) boolean flag
     ) {
     }
 
