@@ -33,7 +33,7 @@ class XlsxWriterIT {
 
     record ColumnAnnotatedAndFormatted(
             @Column String first,
-            @Column @ColumnFormat(value = "#.####", type = CellType.NUMERIC) Double second,
+            @Column @ColumnFormat("#.####") @ColumnType(CellType.NUMERIC) Double second,
             String notWritten
     ) {
     }

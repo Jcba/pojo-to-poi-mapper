@@ -1,7 +1,5 @@
 package com.github.jcba.poimapper;
 
-import org.apache.poi.ss.usermodel.CellType;
-
 import java.lang.annotation.*;
 
 /**
@@ -17,10 +15,4 @@ public @interface ColumnFormat {
      * @return the applied formatting
      */
     String value();
-
-    /**
-     * Sets the cell type
-     * @return the cell type
-     */
-    CellType type();
 }

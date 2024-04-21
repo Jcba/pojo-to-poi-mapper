@@ -75,8 +75,8 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
 
         private Cell createCell(AnnotatedFieldData annotatedFieldData) {
             var cell = currentRow.createCell(columnIndex.getAndIncrement());
-            findColumnFormatAnnotation(annotatedFieldData).ifPresentOrElse(
-                    columnFormat -> writeValueToCell(cell, annotatedFieldData.value(), columnFormat.type()),
+            findAnnotation(ColumnType.class, annotatedFieldData).ifPresentOrElse(
+                    columnType -> writeValueToCell(cell, annotatedFieldData.value(), columnType.value()),
                     () -> cell.setCellValue(annotatedFieldData.value().toString())
             );
             return cell;
@@ -91,14 +91,14 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
         }
 
         private void formatCell(Cell cell, AnnotatedFieldData annotatedFieldData) {
-            findColumnFormatAnnotation(annotatedFieldData)
+            findAnnotation(ColumnFormat.class, annotatedFieldData)
                     .ifPresent(annotation -> new CellFormatter(workbook).format(cell, annotation));
         }
 
-        private static Optional<ColumnFormat> findColumnFormatAnnotation(AnnotatedFieldData annotatedFieldData) {
+        private static <A> Optional<A> findAnnotation(Class<A> type, AnnotatedFieldData annotatedFieldData) {
             return annotatedFieldData.annotations().stream()
-                    .filter(a -> a.annotationType().equals(ColumnFormat.class))
-                    .map(a -> (ColumnFormat) a)
+                    .filter(a -> a.annotationType().equals(type))
+                    .map(type::cast)
                     .findFirst();
         }
     }

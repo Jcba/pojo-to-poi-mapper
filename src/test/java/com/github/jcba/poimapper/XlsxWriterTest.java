@@ -112,8 +112,8 @@ class XlsxWriterTest {
 
     record ColumnAnnotatedAndFormatted(
             @Column String first,
-            @Column @ColumnFormat(value = "#.##", type = CellType.NUMERIC) Double second,
-            @Column @ColumnFormat(value = "", type = CellType.BOOLEAN) boolean flag
+            @Column @ColumnFormat("#.##") @ColumnType(CellType.NUMERIC) Double second,
+            @Column @ColumnType(CellType.BOOLEAN) boolean flag
     ) {
     }
 

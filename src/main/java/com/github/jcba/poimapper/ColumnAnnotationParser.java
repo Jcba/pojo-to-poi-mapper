@@ -39,7 +39,11 @@ class ColumnAnnotationParser<T> {
             try {
                 var valueObject = field.get(rowObject);
                 return new AnnotatedFieldData(
-                        nonNullListOf(columnAnnotation, field.getAnnotation(ColumnFormat.class)),
+                        nonNullListOf(
+                                columnAnnotation,
+                                field.getAnnotation(ColumnFormat.class),
+                                field.getAnnotation(ColumnType.class)
+                        ),
                         valueObject,
                         field.getName()
                 );
