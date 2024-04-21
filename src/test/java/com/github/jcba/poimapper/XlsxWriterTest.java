@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class XlsxWriterJavaTest {
+class XlsxWriterTest {
 
     @Test
     void writesFields_whenAllAreAnnotated() {
