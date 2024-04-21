@@ -3,7 +3,6 @@ package com.github.jcba.poimapper;
 import org.apache.poi.ss.usermodel.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -63,7 +62,7 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
             rowData.forEach(data -> formatCell(createCell(data), data));
         }
 
-        private void createRow(){
+        private void createRow() {
             columnIndex = new AtomicInteger();
             currentRow = sheet.createRow(rowIndex++);
         }
@@ -75,10 +74,11 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
 
         private Cell createCell(AnnotatedFieldData annotatedFieldData) {
             var cell = currentRow.createCell(columnIndex.getAndIncrement());
-            findAnnotation(ColumnType.class, annotatedFieldData).ifPresentOrElse(
-                    columnType -> writeValueToCell(cell, annotatedFieldData.value(), columnType.value()),
-                    () -> cell.setCellValue(annotatedFieldData.value().toString())
-            );
+            annotatedFieldData.findAnnotation(ColumnType.class)
+                    .ifPresentOrElse(
+                            columnType -> writeValueToCell(cell, annotatedFieldData.value(), columnType.value()),
+                            () -> cell.setCellValue(annotatedFieldData.value().toString())
+                    );
             return cell;
         }
 
@@ -91,15 +91,8 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
         }
 
         private void formatCell(Cell cell, AnnotatedFieldData annotatedFieldData) {
-            findAnnotation(ColumnFormat.class, annotatedFieldData)
+            annotatedFieldData.findAnnotation(ColumnFormat.class)
                     .ifPresent(annotation -> new CellFormatter(workbook).format(cell, annotation));
-        }
-
-        private static <A> Optional<A> findAnnotation(Class<A> type, AnnotatedFieldData annotatedFieldData) {
-            return annotatedFieldData.annotations().stream()
-                    .filter(a -> a.annotationType().equals(type))
-                    .map(type::cast)
-                    .findFirst();
         }
     }
 }
