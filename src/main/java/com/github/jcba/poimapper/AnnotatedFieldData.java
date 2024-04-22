@@ -6,8 +6,7 @@ import java.util.Optional;
 
 record AnnotatedFieldData(
     List<Annotation> annotations,
-    Object value,
-    String fieldName
+    Object value
 ){
     <A> Optional<A> findAnnotation(Class<A> type) {
         return annotations.stream()

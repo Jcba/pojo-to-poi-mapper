@@ -43,8 +43,7 @@ class ColumnAnnotationParser<T> {
                                 columnAnnotation,
                                 field.getAnnotation(ColumnFormat.class)
                         ),
-                        valueObject,
-                        field.getName()
+                        valueObject
                 );
             } catch (IllegalAccessException e) {
                 throw new DataAccessException(e);

@@ -9,18 +9,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ColumnAnnotationParserTest {
 
     @Test
-    void findsFieldNames_whenColumnAnnotated() {
-        var testRow = new TestRow("value1", "value2", BigDecimal.TEN, "value3");
-
-        var annotationFieldData = new ColumnAnnotationParser<>(TestRow.class).parse(testRow);
-
-        assertThat(annotationFieldData)
-                .hasSize(3)
-                .extracting(AnnotatedFieldData::fieldName)
-                .containsExactly("first", "second", "third");
-    }
-
-    @Test
     void findsFieldValue_whenColumnAnnotated() {
         var testRow = new TestRow("value1", "value2", BigDecimal.TEN, "value3");
 
