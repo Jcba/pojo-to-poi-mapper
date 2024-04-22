@@ -1,7 +1,6 @@
 package com.github.jcba.poimapper;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -9,6 +8,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -17,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class XlsxWriterTest {
 
     @Test
-    void writesFields_whenAllAreAnnotated() {
+    void writesFields_givenAllAreColumnAnnotated() {
         var testRows = List.of(
                 new ColumnAnnotated("val1", "val2", "val3"),
                 new ColumnAnnotated("val4", "val5", "val6")
@@ -34,7 +35,7 @@ class XlsxWriterTest {
     }
 
     @Test
-    void writesFields_whenAnnotated() {
+    void writesOnlyAnnotatedFields_givenSomeAreColumnAnnotated() {
         var testRows = List.of(
                 new NotAllColumnAnnotated("val1", "val2", "val3"),
                 new NotAllColumnAnnotated("val4", "val5", "val6")
@@ -48,7 +49,7 @@ class XlsxWriterTest {
     }
 
     @Test
-    void formatsFields_whenAnnotated() {
+    void formatsFields_givenColumnFormatAnnotated() {
         var testRows = List.of(
                 new ColumnAnnotatedAndFormatted("row1", 10.1451345, true),
                 new ColumnAnnotatedAndFormatted("row2", 93030.59393910, false)
@@ -56,20 +57,54 @@ class XlsxWriterTest {
 
         var actualSheet = createWorkbookWithSheetData(ColumnAnnotatedAndFormatted.class, testRows);
 
-        assertThat(toList(actualSheet.getRow(0))).containsExactly("first", "second", "flag");
-        assertThat(toList(actualSheet.getRow(1))).containsExactly(testRows.get(0).first, testRows.getFirst().second().toString(), "true");
-        assertThat(toList(actualSheet.getRow(2))).containsExactly(testRows.get(1).first, testRows.getLast().second().toString(), "false");
+        assertThat(toList(actualSheet.getRow(0))).containsExactly("stringValue", "doubleValue", "flag");
+        assertThat(toList(actualSheet.getRow(1))).containsExactly(
+                testRows.get(0).stringValue,
+                testRows.get(0).doubleValue().toString(),
+                "true"
+        );
+        assertThat(toList(actualSheet.getRow(2))).containsExactly(
+                testRows.get(1).stringValue,
+                testRows.get(1).doubleValue().toString(),
+                "false"
+        );
     }
 
     @Test
-    void writesColumns_whenEmptySheet() {
+    void convertsToNumericCellType_givenNumericTypeAnnotation() {
+        var testRows = List.of(
+                new ColumnAnnotatedNumericTypes(10.1451345, BigDecimal.ONE, 10.0, 5),
+                new ColumnAnnotatedNumericTypes(93030.59393910, BigDecimal.TEN, 21.1312, 9 )
+        );
+
+        var actualSheet = createWorkbookWithSheetData(ColumnAnnotatedNumericTypes.class, testRows);
+
+        assertThat(toList(actualSheet.getRow(0))).containsExactly(
+                "doubleValue", "bigDecimalValue", "primitiveDoubleValue", "primitiveIntValue"
+        );
+        assertThat(toList(actualSheet.getRow(1))).containsExactly(
+                testRows.get(0).doubleValue().toString(),
+                testRows.get(0).bigDecimalValue().setScale(1, RoundingMode.UNNECESSARY).toString(),
+                ""+testRows.get(0).primitiveDoubleValue(),
+                ""+(double) testRows.get(0).primitiveIntValue()
+        );
+        assertThat(toList(actualSheet.getRow(2))).containsExactly(
+                testRows.get(1).doubleValue().toString(),
+                testRows.get(1).bigDecimalValue().setScale(1, RoundingMode.UNNECESSARY).toString(),
+                ""+testRows.get(1).primitiveDoubleValue(),
+                ""+(double) testRows.get(1).primitiveIntValue()
+        );
+    }
+
+    @Test
+    void writesColumns_givenEmptySheet() {
         var actualSheet = createWorkbookWithSheetData(NotAllColumnAnnotated.class, List.of());
 
         assertThat(toList(actualSheet.getRow(0))).containsExactly("first", "column2");
     }
 
     @Test
-    void writesFields_whenUsingStreamingWorkbook() {
+    void writesFields_givenStreamingWorkbook() {
         var testRows = List.of(
                 new NotAllColumnAnnotated("val1", "val2", "val3"),
                 new NotAllColumnAnnotated("val4", "val5", "val6")
@@ -111,9 +146,17 @@ class XlsxWriterTest {
     }
 
     record ColumnAnnotatedAndFormatted(
-            @Column String first,
-            @Column(type = CellType.NUMERIC) @ColumnFormat("#.##") Double second,
+            @Column String stringValue,
+            @Column(type = CellType.NUMERIC) @ColumnFormat("#.##") Double doubleValue,
             @Column boolean flag
+    ) {
+    }
+
+    record ColumnAnnotatedNumericTypes(
+            @Column(type = CellType.NUMERIC) Double doubleValue,
+            @Column(type = CellType.NUMERIC) BigDecimal bigDecimalValue,
+            @Column(type = CellType.NUMERIC) double primitiveDoubleValue,
+            @Column(type = CellType.NUMERIC) int primitiveIntValue
     ) {
     }
 

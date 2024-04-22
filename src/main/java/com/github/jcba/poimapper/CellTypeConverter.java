@@ -1,9 +1,7 @@
 package com.github.jcba.poimapper;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 
-import java.math.BigDecimal;
 import java.util.function.Function;
 
 class CellTypeConverter {
@@ -18,10 +16,7 @@ class CellTypeConverter {
 
     static Function<Object, Double> createNumericConverter(Class<?> type) {
         if (Number.class.isAssignableFrom(type)) {
-            return a -> (double) a;
-        }
-        if (BigDecimal.class.isAssignableFrom(type)) {
-            return a -> ((BigDecimal) a).doubleValue();
+            return a -> ((Number) a).doubleValue();
         }
         throw new UnsupportedOperationException(String.format("Can not convert from %s to Numeric Cell type", type));
     }

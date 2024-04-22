@@ -1,7 +1,5 @@
 package com.github.jcba.poimapper;
 
-import org.apache.poi.ss.usermodel.CellType;
-
 import java.lang.annotation.*;
 
 /**
