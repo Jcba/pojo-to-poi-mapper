@@ -41,8 +41,7 @@ class ColumnAnnotationParser<T> {
                 return new AnnotatedFieldData(
                         nonNullListOf(
                                 columnAnnotation,
-                                field.getAnnotation(ColumnFormat.class),
-                                field.getAnnotation(ColumnType.class)
+                                field.getAnnotation(ColumnFormat.class)
                         ),
                         valueObject,
                         field.getName()

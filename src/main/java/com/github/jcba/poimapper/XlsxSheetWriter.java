@@ -1,6 +1,9 @@
 package com.github.jcba.poimapper;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -74,20 +77,16 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
 
         private Cell createCell(AnnotatedFieldData annotatedFieldData) {
             var cell = currentRow.createCell(columnIndex.getAndIncrement());
-            annotatedFieldData.findAnnotation(ColumnType.class)
+            annotatedFieldData.findAnnotation(Column.class)
                     .ifPresentOrElse(
-                            columnType -> writeValueToCell(cell, annotatedFieldData.value(), columnType.value()),
+                            columnType -> CellTypeConverter.writeValueToCell(
+                                    cell,
+                                    annotatedFieldData.value(),
+                                    columnType.type()
+                            ),
                             () -> cell.setCellValue(annotatedFieldData.value().toString())
                     );
             return cell;
-        }
-
-        private void writeValueToCell(Cell cell, Object value, CellType type) {
-            switch (type) {
-                case BOOLEAN -> cell.setCellValue((boolean) value);
-                case NUMERIC -> cell.setCellValue((double) value);
-                default -> cell.setCellValue(value.toString());
-            }
         }
 
         private void formatCell(Cell cell, AnnotatedFieldData annotatedFieldData) {
