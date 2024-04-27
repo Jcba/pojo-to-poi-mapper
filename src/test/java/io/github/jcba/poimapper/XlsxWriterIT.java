@@ -1,4 +1,4 @@
-package com.github.jcba.poimapper;
+package io.github.jcba.poimapper;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;

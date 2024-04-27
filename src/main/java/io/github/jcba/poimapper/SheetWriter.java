@@ -1,4 +1,4 @@
-package com.github.jcba.poimapper;
+package io.github.jcba.poimapper;
 
 import java.util.stream.Stream;
 

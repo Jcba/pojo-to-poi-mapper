@@ -1,4 +1,4 @@
-package com.github.jcba.poimapper;
+package io.github.jcba.poimapper;
 
 /**
  * Thrown when an error occurred while accessing data

@@ -1,4 +1,4 @@
-package com.github.jcba.poimapper;
+package io.github.jcba.poimapper;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;

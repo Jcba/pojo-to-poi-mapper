@@ -1,4 +1,4 @@
-package com.github.jcba.poimapper;
+package io.github.jcba.poimapper;
 
 import org.junit.jupiter.api.Test;
 

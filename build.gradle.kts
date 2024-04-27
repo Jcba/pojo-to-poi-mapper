@@ -4,7 +4,7 @@ plugins {
     signing
 }
 
-group = "com.github.jcba"
+group = "io.github.jcba"
 version = "1.0.0"
 
 repositories {
