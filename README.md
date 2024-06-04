@@ -16,7 +16,7 @@ Add the library dependency to your Maven or Gradle project:
 ```xml
 <!-- Maven -->
 <dependency>
-    <groupId>com.github.jcba</groupId>
+    <groupId>io.github.jcba</groupId>
     <artifactId>pojo-to-apache-poi-mapper</artifactId>
     <version>0.0.1</version>
 </dependency>
@@ -24,7 +24,7 @@ Add the library dependency to your Maven or Gradle project:
 
 ```groovy
 // Gradle
-implementation 'com.github.jcba:pojo-to-apache-poi-mapper:0.0.1'
+implementation 'io.github.jcba:pojo-to-apache-poi-mapper:0.0.1'
 ```
 
 ### Define Java Object and configure mapping
