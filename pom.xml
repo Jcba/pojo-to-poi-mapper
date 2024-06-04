@@ -21,8 +21,17 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>Job Bakker</name>
+            <email>job190@gmail.com</email>
+        </developer>
+    </developers>
+
     <scm>
-        <url>https://svn.apache.org/viewvc/maven</url>
+        <connection>scm:git:git://github.com:Jcba/pojo-to-poi-mapper.git</connection>
+        <developerConnection>scm:git:ssh://github.com:Jcba/pojo-to-poi-mapper.git</developerConnection>
+        <url>https://github.com/Jcba/pojo-to-poi-mapper</url>
     </scm>
 
     <dependencies>
