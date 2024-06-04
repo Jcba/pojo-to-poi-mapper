@@ -1,11 +1,11 @@
 # POJO to Apache POI Excel Mapper
 
-This library facilitates the mapping of Java Objects to [Apache POI](https://poi.apache.org/) Excel sheets, like Jackson does for JSON. 
+This library facilitates the mapping of annotated Java Objects to [Apache POI](https://poi.apache.org/) Excel sheets. 
 It offers an intuitive and flexible extension of Apache POI for developers looking to use annotated POJO's to create Excel sheets.
 
 ## Features
-* Mapping: Pojo mapping to sheets using annotations
-* Streaming API Support: Compatible with Apache POI's streaming API for efficient memory usage with large datasets.
+* Mapping: object mapping to sheets using annotations.
+* Streaming API Support: Compatible with Apache POI's streaming API for efficient memory usage.
 * Java version: Compatible with Java 17 or higher.
 
 ## How to Use
@@ -29,7 +29,7 @@ implementation 'io.github.jcba:pojo-to-apache-poi-mapper:0.0.1'
 
 ### Define Java Object and configure mapping
 
-Define your Java object with properties that you want to export to an Excel sheet. Annotate your Java object properties with @Column to specify their mapping to Excel cells. Only annotated fields will be mapped.
+Define your Java object and annotate fields with the @Column annotation. Only annotated fields will be mapped.
 
 ```java
 record MyObject (
@@ -37,7 +37,7 @@ record MyObject (
         @Column(columnName = "product")
         String productName,
 
-        @Column
+        @Column(type = CellType.NUMERIC)
         BigDecimal price,
 
         @Column
@@ -45,7 +45,9 @@ record MyObject (
 ) {}
 ```
 
-In the Column annotation, the columnName parameter is optional. If omitted, the name of the field will be used as column name.
+The columnName parameter is optional. If omitted, the name of the field will be used as column name.
+
+By default, all values will be written as String. It is possible to specify the desired cell type with the 'type' option. 
 
 The field ordering in the object determines the column ordering in the sheet.
 
