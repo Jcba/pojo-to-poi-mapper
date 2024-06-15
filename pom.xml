@@ -19,14 +19,7 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
         </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <name>Job Bakker</name>
-            <email>job190@gmail.com</email>
-        </developer>
-    </developers>
+    </licenses
 
     <scm>
         <connection>scm:git:git://github.com:Jcba/pojo-to-poi-mapper.git</connection>
