@@ -11,8 +11,8 @@ class CellFormatter {
         this.cellStyle = workbook.createCellStyle();
     }
 
-    void format(Cell cell, ColumnFormat columnFormat){
-        short format = dataFormat.getFormat(columnFormat.value());
+    void format(Cell cell, String columnFormat){
+        short format = dataFormat.getFormat(columnFormat);
         cellStyle.setDataFormat(format);
         cell.setCellStyle(cellStyle);
     }

@@ -8,13 +8,20 @@ class CellTypeConverter {
 
     static void writeValueToCell(Cell cell, Object value, CellType type) {
         switch (type) {
-            case BOOLEAN -> cell.setCellValue((boolean) value);
+            case BOOLEAN -> cell.setCellValue(createBooleanConverter(value.getClass()).apply(value));
             case NUMERIC -> cell.setCellValue(createNumericConverter(value.getClass()).apply(value));
             default -> cell.setCellValue(value.toString());
         }
     }
 
-    static Function<Object, Double> createNumericConverter(Class<?> type) {
+    private static Function<Object, Boolean> createBooleanConverter(Class<?> type) {
+        if (Boolean.class.isAssignableFrom(type)) {
+            return b -> ((Boolean) b);
+        }
+        throw new UnsupportedOperationException(String.format("Can not convert from %s to Boolean Cell type", type));
+    }
+
+    private static Function<Object, Double> createNumericConverter(Class<?> type) {
         if (Number.class.isAssignableFrom(type)) {
             return a -> ((Number) a).doubleValue();
         }

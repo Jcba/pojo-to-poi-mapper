@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 class ColumnAnnotationParser<T> {
 
@@ -21,14 +20,14 @@ class ColumnAnnotationParser<T> {
                 .toList();
     }
 
-    List<AnnotatedFieldData> parse(T rowObject) {
+    List<CellData> parse(T rowObject) {
         return Arrays.stream(type.getDeclaredFields())
                 .map(field -> findAnnotatedFieldProperties(field, rowObject))
                 .filter(Objects::nonNull)
                 .toList();
     }
 
-    private AnnotatedFieldData findAnnotatedFieldProperties(Field field, T rowObject) {
+    private CellData findAnnotatedFieldProperties(Field field, T rowObject) {
         var columnAnnotation = field.getAnnotation(Column.class);
 
         if (null == columnAnnotation) {
@@ -38,11 +37,10 @@ class ColumnAnnotationParser<T> {
         if (field.trySetAccessible()) {
             try {
                 var valueObject = field.get(rowObject);
-                return new AnnotatedFieldData(
-                        nonNullListOf(
-                                columnAnnotation,
-                                field.getAnnotation(ColumnFormat.class)
-                        ),
+                return new CellData(
+                        findFieldFormat(field),
+                        columnAnnotation.columnName(),
+                        columnAnnotation.type(),
                         valueObject
                 );
             } catch (IllegalAccessException e) {
@@ -51,6 +49,14 @@ class ColumnAnnotationParser<T> {
         }
 
         return null;
+    }
+
+    private static String findFieldFormat(Field field) {
+        var format = field.getAnnotation(ColumnFormat.class);
+        if (null == format) {
+            return null;
+        }
+        return format.value();
     }
 
     private static String findColumnName(Field field) {
@@ -65,11 +71,6 @@ class ColumnAnnotationParser<T> {
         }
 
         return columnAnnotation.columnName();
-    }
-
-    @SafeVarargs
-    private <A> List<A> nonNullListOf(A... items) {
-        return Stream.of(items).filter(Objects::nonNull).toList();
     }
 
 }

@@ -16,7 +16,7 @@ class ColumnAnnotationParserTest {
 
         assertThat(annotationFieldData)
                 .hasSize(3)
-                .extracting(AnnotatedFieldData::value)
+                .extracting(CellData::value)
                 .containsExactly(testRow.first, testRow.second, testRow.third);
     }
 

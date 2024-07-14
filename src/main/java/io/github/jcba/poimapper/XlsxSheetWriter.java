@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -56,16 +57,16 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
         private AtomicInteger columnIndex;
 
         void writeTextRow(List<String> textRowData) {
-            createRow();
+            startNewRow();
             textRowData.forEach(this::createCell);
         }
 
-        void writeRow(List<AnnotatedFieldData> rowData) {
-            createRow();
+        void writeRow(List<CellData> rowData) {
+            startNewRow();
             rowData.forEach(data -> formatCell(createCell(data), data));
         }
 
-        private void createRow() {
+        private void startNewRow() {
             columnIndex = new AtomicInteger();
             currentRow = sheet.createRow(rowIndex++);
         }
@@ -75,23 +76,21 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
             cell.setCellValue(data);
         }
 
-        private Cell createCell(AnnotatedFieldData annotatedFieldData) {
+        private Cell createCell(CellData cellData) {
             var cell = currentRow.createCell(columnIndex.getAndIncrement());
-            annotatedFieldData.findAnnotation(Column.class)
-                    .ifPresentOrElse(
-                            columnType -> CellTypeConverter.writeValueToCell(
-                                    cell,
-                                    annotatedFieldData.value(),
-                                    columnType.type()
-                            ),
-                            () -> cell.setCellValue(annotatedFieldData.value().toString())
-                    );
+
+            CellTypeConverter.writeValueToCell(
+                    cell,
+                    cellData.value(),
+                    cellData.type()
+            );
+
             return cell;
         }
 
-        private void formatCell(Cell cell, AnnotatedFieldData annotatedFieldData) {
-            annotatedFieldData.findAnnotation(ColumnFormat.class)
-                    .ifPresent(annotation -> new CellFormatter(workbook).format(cell, annotation));
+        private void formatCell(Cell cell, CellData cellData) {
+            Optional.ofNullable(cellData.formatString())
+                    .ifPresent(format -> new CellFormatter(workbook).format(cell, format));
         }
     }
 }
