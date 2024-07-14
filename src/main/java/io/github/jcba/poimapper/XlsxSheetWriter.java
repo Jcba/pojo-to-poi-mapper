@@ -42,7 +42,7 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
     }
 
     private void writeHeader() {
-        rowWriter.writeTextRow(columnAnnotationParser.findColumnNames());
+        rowWriter.writeRow(columnAnnotationParser.findColumnNames());
     }
 
     private void writeContent(Stream<T> input) {
@@ -56,11 +56,6 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
         private Row currentRow;
         private AtomicInteger columnIndex;
 
-        void writeTextRow(List<String> textRowData) {
-            startNewRow();
-            textRowData.forEach(this::createCell);
-        }
-
         void writeRow(List<CellData> rowData) {
             startNewRow();
             rowData.forEach(data -> formatCell(createCell(data), data));
@@ -69,11 +64,6 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
         private void startNewRow() {
             columnIndex = new AtomicInteger();
             currentRow = sheet.createRow(rowIndex++);
-        }
-
-        private void createCell(String data) {
-            var cell = currentRow.createCell(columnIndex.getAndIncrement());
-            cell.setCellValue(data);
         }
 
         private Cell createCell(CellData cellData) {

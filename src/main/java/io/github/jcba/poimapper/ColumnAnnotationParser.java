@@ -13,10 +13,11 @@ class ColumnAnnotationParser<T> {
         this.type = type;
     }
 
-    List<String> findColumnNames() {
+    List<CellData> findColumnNames() {
         return Arrays.stream(type.getDeclaredFields())
                 .map(ColumnAnnotationParser::findColumnName)
                 .filter(Objects::nonNull)
+                .map(value -> new CellData(null, CellType.STRING, value))
                 .toList();
     }
 
@@ -39,7 +40,6 @@ class ColumnAnnotationParser<T> {
                 var valueObject = field.get(rowObject);
                 return new CellData(
                         findFieldFormat(field),
-                        columnAnnotation.columnName(),
                         columnAnnotation.type(),
                         valueObject
                 );
