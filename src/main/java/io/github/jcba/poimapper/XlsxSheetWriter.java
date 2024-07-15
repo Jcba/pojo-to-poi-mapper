@@ -16,7 +16,7 @@ import java.util.stream.Stream;
  * @param <T> The annotated Java Object Type
  */
 public class XlsxSheetWriter<T> implements SheetWriter<T> {
-    private final Workbook workbook;
+    private final WorkbookCellFormatter workbookCellFormatter;
     private final Sheet sheet;
     private final ColumnAnnotationParser<T> columnAnnotationParser;
     private final RowWriter rowWriter;
@@ -29,7 +29,7 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
      * @param sheet    the sheet to write to
      */
     public XlsxSheetWriter(Class<T> type, Workbook workbook, Sheet sheet) {
-        this.workbook = workbook;
+        this.workbookCellFormatter = new WorkbookCellFormatter(workbook);
         this.sheet = sheet;
         columnAnnotationParser = new ColumnAnnotationParser<>(type);
         rowWriter = new RowWriter();
@@ -80,7 +80,7 @@ public class XlsxSheetWriter<T> implements SheetWriter<T> {
 
         private void formatCell(Cell cell, CellData cellData) {
             Optional.ofNullable(cellData.formatString())
-                    .ifPresent(format -> new CellFormatter(workbook).format(cell, format));
+                    .ifPresent(format -> workbookCellFormatter.formatCell(cell, format));
         }
     }
 }
